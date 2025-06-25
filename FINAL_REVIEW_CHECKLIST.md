@@ -63,7 +63,9 @@
 # Copy these EXACT values to Netlify/Vercel:
 VITE_SUPABASE_URL=https://uorhddenfmzsstipytdb.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmhkZGVuZm16c3p0aXB5dGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTY1NTgsImV4cCI6MjA2NjM3MjU1OH0.VRu_kU5lmD1suFt3iNK5wmHf4fBiUeHzzpQNLw0La1M
-VITE_MAILERSEND_API_TOKEN=mlsn.45f356de58c0eb7987d07df6f311126754c3d5e4c5a833b17470d6e50d2ea2ae
+
+# MailerSend Configuration (GET NEW API TOKEN)
+VITE_MAILERSEND_API_TOKEN=your_new_mailersend_api_token_here
 VITE_MAILERSEND_DOMAIN=chefliferadio.com
 VITE_MAILERSEND_FROM_EMAIL=adam@chefliferadio.com
 VITE_MAILERSEND_FROM_NAME=Chef Adam M Lamb
@@ -90,6 +92,7 @@ VITE_MAILERSEND_FROM_NAME=Chef Adam M Lamb
 
 #### **4. MailerSend Domain Verification (Critical)**
 - [ ] **Login to MailerSend**: [app.mailersend.com](https://app.mailersend.com)
+- [ ] **Generate NEW API Token** (old one is compromised)
 - [ ] **Add domain**: `chefliferadio.com`
 - [ ] **Add DNS records** they provide to your domain
 - [ ] **Wait for verification** (1-24 hours)
@@ -208,6 +211,7 @@ npm run build
 ## 📞 **IMMEDIATE SUPPORT**
 
 **If anything doesn't work after deployment:**
+
 1. **Check environment variables** are set correctly
 2. **Verify Supabase connection** in browser console
 3. **Test MailerSend API** in admin dashboard
@@ -217,11 +221,11 @@ npm run build
 
 ## 🎉 **CONGRATULATIONS!**
 
-**You now have a professional, automated, AI-powered website that rivals any major media company.** 
+**You now have a professional, automated, AI-powered website that rivals any major media company.**
 
 **Your Chef Life Radio platform is ready to:**
 - ✅ **Capture leads automatically**
-- ✅ **Nurture subscribers professionally** 
+- ✅ **Nurture subscribers professionally**
 - ✅ **Provide intelligent assistance**
 - ✅ **Scale with your growth**
 - ✅ **Save you countless hours**

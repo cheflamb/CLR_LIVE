@@ -9,24 +9,41 @@ Your Chef Life Radio website is fully configured with MailerSend integration and
 Add these to your Netlify deployment settings:
 
 ### **Required (Copy these exactly):**
-
 ```
 VITE_SUPABASE_URL=https://uorhddenfmzsstipytdb.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmhkZGVuZm16c3p0aXB5dGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTY1NTgsImV4cCI6MjA2NjM3MjU1OH0.VRu_kU5lmD1suFt3iNK5wmHf4fBiUeHzzpQNLw0La1M
-VITE_MAILERSEND_API_TOKEN=mlsn.45f356de58c0eb7987d07df6f311126754c3d5e4c5a833b17470d6e50d2ea2ae
+
+# MailerSend - GET NEW API TOKEN FROM DASHBOARD
+VITE_MAILERSEND_API_TOKEN=your_new_api_token_here
 VITE_MAILERSEND_DOMAIN=chefliferadio.com
 VITE_MAILERSEND_FROM_EMAIL=adam@chefliferadio.com
 VITE_MAILERSEND_FROM_NAME=Chef Adam M Lamb
 ```
 
 ### **Optional (Add when ready):**
-
 ```
 VITE_WORDPRESS_SITE_URL=https://cheflifemedia.com
 VITE_MEMBERSHIP_SITE_URL=https://cheflifemedia.com
 VITE_GA_TRACKING_ID=your_google_analytics_id
 VITE_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
 ```
+
+## **🚨 CRITICAL: MailerSend Security Fix Required**
+
+Your previous API token was exposed on GitHub and has been compromised. **You MUST:**
+
+### **Step 1: Generate New API Token (URGENT)**
+1. **Login to MailerSend**: [app.mailersend.com](https://app.mailersend.com)
+2. **Go to Settings** → **API Tokens**
+3. **Delete the old token** (if still listed)
+4. **Create new token** with name "Chef Life Radio Website"
+5. **Copy the new token** (starts with `mlsn.`)
+6. **Add to environment variables** immediately
+
+### **Step 2: Update Deployment**
+- **Never commit API tokens** to GitHub again
+- **Only add to hosting platform** environment variables
+- **Test email delivery** after updating
 
 ## **What's Already Working:**
 
@@ -81,41 +98,7 @@ VITE_FACEBOOK_PIXEL_ID=your_facebook_pixel_id
 - Add the DNS records they provide
 - Wait for verification (usually 1-24 hours)
 
-### **2. Create Email Templates (Optional)**
-
-In MailerSend, create these professional templates:
-
-**Welcome Email:**
-```
-Subject: Welcome to the Chef Life Radio Movement!
-
-Hi {{first_name}},
-
-Welcome to the Chef Life Radio community! As a {{role}}, you're joining thousands of culinary leaders who are transforming kitchen culture.
-
-🎧 Listen to latest episodes: {{podcast_link}}
-
-Stay Tall & Frosty,
-Chef Adam M Lamb
-```
-
-**Lead Magnet Email:**
-```
-Subject: Your Leadership Toolkit is Ready!
-
-Hi {{first_name}},
-
-Here's your free Leadership Toolkit: {{download_link}}
-
-Plus, check out these bonus resources: {{bonus_content_link}}
-
-Welcome to the movement!
-
-Chef Adam M Lamb
-```
-
-### **3. Test Everything:**
-
+### **2. Test Everything:**
 After deployment, test these key features:
 - Newsletter signup on homepage ✅
 - Lead magnet download on subscribe page ✅
@@ -123,22 +106,12 @@ After deployment, test these key features:
 - Admin panel access ✅
 - Email delivery (check your inbox) ✅
 
-## **Deployment Commands:**
-
-```bash
-# Build the project
-npm run build
-
-# The dist/ folder is ready for Netlify
-```
-
 ## **Netlify Settings:**
 - **Build command:** `npm run build`
 - **Publish directory:** `dist`
 - **Node version:** `18` or higher
 
 ## **Support:**
-
 Your site includes comprehensive error handling and graceful fallbacks:
 - Works perfectly even if MailerSend is temporarily unavailable
 - All data is safely stored in Supabase

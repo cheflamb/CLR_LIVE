@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, {useState} from 'react';
+import {motion} from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
-import { useAuth } from '../contexts/AuthContext';
+import {useAuth} from '../contexts/AuthContext';
 
-const { FiShield, FiMail, FiLock, FiLoader, FiEye, FiEyeOff, FiAlertCircle } = FiIcons;
+const {FiShield, FiMail, FiLock, FiLoader, FiEye, FiEyeOff, FiAlertCircle} = FiIcons;
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -14,10 +14,10 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const {signIn} = useAuth();
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const {name, value} = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -33,13 +33,14 @@ const AdminLogin = () => {
     console.log('Form submitted with:', formData.email);
 
     const result = await signIn(formData.email, formData.password);
+    
     if (!result.success) {
       setError(result.error || 'Invalid credentials');
       console.error('Login failed:', result.error);
     } else {
       console.log('Login successful, should redirect now');
     }
-
+    
     setIsLoading(false);
   };
 

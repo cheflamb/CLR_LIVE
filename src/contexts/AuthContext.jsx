@@ -21,14 +21,17 @@ export const AuthProvider = ({ children }) => {
     const ensureAdminUserExists = async () => {
       try {
         console.log('🔧 Ensuring admin user record exists...');
+        
         const { error } = await supabase
           .from('admin_users_clr2025')
-          .upsert([{
-            email: 'admin@chefliferadio.com',
-            full_name: 'Admin User',
-            role: 'super_admin',
-            is_active: true
-          }], {
+          .upsert([
+            {
+              email: 'adam@chefliferadio.com',
+              full_name: 'Chef Adam M Lamb',
+              role: 'super_admin',
+              is_active: true
+            }
+          ], {
             onConflict: 'email',
             ignoreDuplicates: false
           });
@@ -99,6 +102,7 @@ export const AuthProvider = ({ children }) => {
           setUser(null);
           setIsAdmin(false);
         }
+        
         setLoading(false);
       }
     );
@@ -125,7 +129,12 @@ export const AuthProvider = ({ children }) => {
       }
 
       const adminStatus = !!data;
-      console.log('🔐 Admin status result:', { adminStatus, hasData: !!data, error: error?.message });
+      console.log('🔐 Admin status result:', {
+        adminStatus,
+        hasData: !!data,
+        error: error?.message
+      });
+      
       setIsAdmin(adminStatus);
     } catch (error) {
       console.error('❌ Error checking admin status:', error);
@@ -136,6 +145,7 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       console.log('🔑 Attempting sign in for:', email);
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -168,15 +178,15 @@ export const AuthProvider = ({ children }) => {
       if (error) {
         console.error('❌ Sign out error:', error);
         // Even if there's an error, we've cleared local state
-        return { success: true }; // Consider it successful since we cleared state
+        return { success: true };
       }
-
+      
       console.log('✅ Sign out successful');
       return { success: true };
     } catch (error) {
       console.error('❌ Sign out error:', error);
       // Even if there's an error, we've cleared local state
-      return { success: true }; // Consider it successful since we cleared state
+      return { success: true };
     }
   };
 
