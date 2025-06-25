@@ -110,31 +110,27 @@ const Header = () => {
                 key={item.name}
                 to={item.path}
                 className={`block py-2 text-sm font-heading font-medium ${
-                  isActive(item.path)
-                    ? 'text-brand-red'
-                    : 'text-brand-black hover:text-brand-red'
+                  isActive(item.path) ? 'text-brand-red' : 'text-brand-black hover:text-brand-red'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-
+            
             {/* Mobile Admin Link - Conditional rendering */}
-            {(user && isAdmin) || !user ? (
+            {((user && isAdmin) || !user) && (
               <Link
                 to="/admin"
                 className={`block py-2 text-sm font-heading font-medium flex items-center space-x-2 ${
-                  isActive('/admin')
-                    ? 'text-brand-red'
-                    : 'text-gray-500 hover:text-brand-red'
+                  isActive('/admin') ? 'text-brand-red' : 'text-gray-500 hover:text-brand-red'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <SafeIcon icon={FiSettings} className="h-4 w-4" />
                 <span>{user && isAdmin ? 'Admin Panel' : 'Admin Login'}</span>
               </Link>
-            ) : null}
+            )}
           </motion.nav>
         )}
       </div>

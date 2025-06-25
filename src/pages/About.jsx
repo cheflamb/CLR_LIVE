@@ -20,7 +20,7 @@ const About = () => {
     },
     {
       icon: FiTarget,
-      title: "More Partnership", 
+      title: "More Partnership",
       description: "Less 'put up or shut up'"
     }
   ];
@@ -58,6 +58,7 @@ const About = () => {
                 className="rounded-2xl shadow-2xl w-full"
               />
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -91,8 +92,7 @@ const About = () => {
                 Chef Life Radio is more than a podcast—it's a <strong className="text-brand-red">leadership platform</strong> for chefs and culinary professionals who are ready to do things differently.
               </blockquote>
               <p className="text-lg font-sans text-brand-gray">
-                We're here to give you the tools, insights, and mindset to lead with confidence, 
-                build resilient teams, and reclaim your passion for the craft.
+                We're here to give you the tools, insights, and mindset to lead with confidence, build resilient teams, and reclaim your passion for the craft.
               </p>
             </div>
           </motion.div>
@@ -135,12 +135,10 @@ const About = () => {
             <h2 className="text-4xl font-display font-bold text-brand-black mb-6">Our Story</h2>
             <div className="max-w-3xl mx-auto">
               <p className="text-lg font-sans text-brand-gray mb-6 leading-relaxed">
-                Whether you're a seasoned chef, a rising culinary star, or someone trying to make sense 
-                of the chaos behind the pass—this is your space to grow, reflect, and thrive.
+                Whether you're a seasoned chef, a rising culinary star, or someone trying to make sense of the chaos behind the pass—this is your space to grow, reflect, and thrive.
               </p>
               <p className="text-lg font-sans text-brand-gray mb-6 leading-relaxed">
-                Hosted by <strong className="text-brand-red">Chef Adam Lamb</strong>, each episode blends hard-won experience 
-                with fresh strategies that address the real-world challenges of modern kitchens.
+                Hosted by <strong className="text-brand-red">Chef Adam Lamb</strong>, each episode blends hard-won experience with fresh strategies that address the real-world challenges of modern kitchens.
               </p>
             </div>
           </motion.div>
@@ -157,6 +155,7 @@ const About = () => {
                 className="rounded-2xl shadow-lg w-full"
               />
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -172,9 +171,7 @@ const About = () => {
                 </div>
               </div>
               <p className="text-lg font-sans text-brand-gray leading-relaxed">
-                With decades of experience in professional kitchens, Chef Adam understands 
-                the unique challenges facing culinary leaders today. His mission is to transform 
-                kitchen culture through authentic leadership and sustainable practices.
+                With decades of experience in professional kitchens, Chef Adam understands the unique challenges facing culinary leaders today. His mission is to transform kitchen culture through authentic leadership and sustainable practices.
               </p>
             </motion.div>
           </div>
@@ -218,7 +215,10 @@ const About = () => {
             <div className="mb-8">
               <h3 className="text-3xl font-display font-bold text-brand-gold mb-4">Welcome to the movement.</h3>
             </div>
-            <Link to="/subscribe" className="bg-brand-gold hover:bg-yellow-600 text-brand-black px-8 py-4 rounded-lg font-heading font-semibold transition-colors inline-flex items-center space-x-2">
+            <Link
+              to="/subscribe"
+              className="bg-brand-gold hover:bg-yellow-600 text-brand-black px-8 py-4 rounded-lg font-heading font-semibold transition-colors inline-flex items-center space-x-2"
+            >
               <span>Join the Movement</span>
               <SafeIcon icon={FiArrowRight} className="h-5 w-5" />
             </Link>

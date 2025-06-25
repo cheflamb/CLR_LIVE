@@ -101,7 +101,7 @@ const AdminPanel = () => {
           }]);
         if (error) throw error;
       }
-
+      
       setEditingPost(null);
       setNewPost({
         title: '',
@@ -140,7 +140,7 @@ const AdminPanel = () => {
           }]);
         if (error) throw error;
       }
-
+      
       setEditingEpisode(null);
       setNewEpisode({
         title: '',
@@ -233,10 +233,7 @@ const AdminPanel = () => {
             <h3 className="text-2xl font-heading font-bold">
               {post ? 'Edit Post' : 'Create New Post'}
             </h3>
-            <button
-              onClick={onCancel}
-              className="text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
               <SafeIcon icon={FiX} className="h-6 w-6" />
             </button>
           </div>
@@ -402,10 +399,7 @@ const AdminPanel = () => {
             <h3 className="text-2xl font-heading font-bold">
               {episode ? 'Edit Episode' : 'Create New Episode'}
             </h3>
-            <button
-              onClick={onCancel}
-              className="text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
               <SafeIcon icon={FiX} className="h-6 w-6" />
             </button>
           </div>
@@ -641,6 +635,7 @@ const AdminPanel = () => {
                 <span>New Post</span>
               </button>
             </div>
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
@@ -687,11 +682,9 @@ const AdminPanel = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          post.status === 'published'
-                            ? 'bg-green-100 text-green-800'
-                            : post.status === 'draft'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
+                          post.status === 'published' ? 'bg-green-100 text-green-800' :
+                          post.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
                           {post.status}
                         </span>
@@ -744,6 +737,7 @@ const AdminPanel = () => {
                 <span>New Episode</span>
               </button>
             </div>
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
@@ -785,11 +779,9 @@ const AdminPanel = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          episode.status === 'published'
-                            ? 'bg-green-100 text-green-800'
-                            : episode.status === 'draft'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
+                          episode.status === 'published' ? 'bg-green-100 text-green-800' :
+                          episode.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
                           {episode.status}
                         </span>

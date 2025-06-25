@@ -1,10 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import {Link} from 'react-router-dom';
+import {motion} from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
+import MembershipButton from '../components/MembershipButton';
 
-const { FiPlay, FiHeadphones, FiStar, FiMail, FiArrowRight, FiUsers, FiTarget, FiHeart } = FiIcons;
+const {FiPlay, FiHeadphones, FiStar, FiMail, FiUsers, FiTarget, FiHeart, FiMic, FiShoppingBag} = FiIcons;
 
 const Home = () => {
   const values = [
@@ -15,13 +16,37 @@ const Home = () => {
     },
     {
       icon: FiHeart,
-      title: "More Compassion",
+      title: "More Compassion", 
       description: "Less CutThroat Island"
     },
     {
       icon: FiTarget,
       title: "More Partnership",
       description: "Less 'put up or shut up'"
+    }
+  ];
+
+  const communityLinks = [
+    {
+      icon: FiMic,
+      title: "Be Part of The Show",
+      description: "Apply to be a guest on our podcast",
+      url: "https://therealchefliferadio.captivate.fm/booking",
+      color: "bg-brand-red hover:bg-red-800"
+    },
+    {
+      icon: FiHeart,
+      title: "Support the Crew",
+      description: "Help us keep the show running",
+      url: "https://ko-fi.com/chefliferadio",
+      color: "bg-pink-500 hover:bg-pink-600"
+    },
+    {
+      icon: FiShoppingBag,
+      title: "Chef Life Swag",
+      description: "Get your official Chef Life gear",
+      url: "https://swag.chefliferadio.com/",
+      color: "bg-brand-gold hover:bg-yellow-600 text-brand-black"
     }
   ];
 
@@ -42,8 +67,7 @@ const Home = () => {
               transition={{ delay: 0.2 }}
             >
               <h1 className="text-5xl lg:text-6xl font-display font-bold mb-6 leading-tight text-brand-black">
-                Empowering Culinary
-                <span className="text-brand-red block">Leaders</span>
+                Empowering Culinary <span className="text-brand-red block">Leaders</span>
               </h1>
               <p className="text-xl mb-8 text-brand-gray leading-relaxed font-sans">
                 Building thriving, sustainable kitchens through purpose-driven leadership. 
@@ -57,15 +81,12 @@ const Home = () => {
                   <SafeIcon icon={FiPlay} className="h-5 w-5" />
                   <span>Listen Now</span>
                 </Link>
-                <Link
-                  to="/subscribe"
-                  className="border-2 border-brand-red hover:bg-brand-red hover:text-white text-brand-red px-8 py-4 rounded-lg font-heading font-semibold transition-all duration-300 flex items-center justify-center space-x-2"
-                >
-                  <SafeIcon icon={FiHeadphones} className="h-5 w-5" />
-                  <span>Subscribe</span>
-                </Link>
+                <MembershipButton variant="outline" source="hero_cta">
+                  Join the Movement
+                </MembershipButton>
               </div>
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -138,6 +159,7 @@ const Home = () => {
               Working in a kitchen should be demanding; it shouldn't have to be demeaning.
             </p>
           </motion.div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             {values.map((value, index) => (
               <motion.div
@@ -156,6 +178,7 @@ const Home = () => {
               </motion.div>
             ))}
           </div>
+
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -169,8 +192,47 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Kitchen Culture Images */}
+      {/* Community Links */}
       <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold text-brand-black mb-6">Join Our Community</h2>
+            <p className="text-xl text-brand-gray max-w-3xl mx-auto font-sans">
+              Multiple ways to connect, support, and be part of the Chef Life Radio movement.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {communityLinks.map((link, index) => (
+              <motion.a
+                key={index}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className={`${link.color} text-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-center block`}
+              >
+                <div className="bg-white bg-opacity-20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <SafeIcon icon={link.icon} className="h-8 w-8" />
+                </div>
+                <h3 className="text-xl font-heading font-bold mb-3">{link.title}</h3>
+                <p className="opacity-90 font-sans">{link.description}</p>
+              </motion.a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Kitchen Culture Images */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -209,20 +271,21 @@ const Home = () => {
             className="text-center"
           >
             <SafeIcon icon={FiMail} className="h-16 w-16 mx-auto mb-6 text-brand-gold" />
-            <h2 className="text-4xl font-display font-bold mb-4">Stay Connected</h2>
+            <h2 className="text-4xl font-display font-bold mb-4">Ready to Transform Your Kitchen?</h2>
             <p className="text-xl mb-8 text-white max-w-2xl mx-auto font-sans">
               Join the movement. Get weekly insights and leadership strategies delivered to your inbox.
             </p>
-            <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-lg text-brand-black font-sans focus:outline-none focus:ring-2 focus:ring-brand-gold"
-              />
-              <button className="bg-brand-gold hover:bg-yellow-600 text-brand-black px-6 py-3 rounded-lg font-heading font-semibold transition-colors flex items-center justify-center space-x-2">
-                <span>Join Movement</span>
-                <SafeIcon icon={FiArrowRight} className="h-4 w-4" />
-              </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-lg mx-auto mb-8">
+              <Link
+                to="/subscribe"
+                className="bg-white text-brand-red hover:bg-gray-100 px-8 py-4 rounded-lg font-heading font-semibold transition-colors flex items-center space-x-2"
+              >
+                <SafeIcon icon={FiHeadphones} className="h-5 w-5" />
+                <span>Subscribe to Podcast</span>
+              </Link>
+              <MembershipButton variant="gold" source="home_newsletter" size="lg">
+                Join the Movement
+              </MembershipButton>
             </div>
             <p className="mt-6 text-sm font-sans opacity-90">Stay Tall & Frosty, Y'all.</p>
           </motion.div>

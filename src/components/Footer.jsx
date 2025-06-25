@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
-const { FiInstagram, FiTwitter, FiYoutube, FiMail, FiPhone } = FiIcons;
+const {FiInstagram, FiTwitter, FiYoutube, FiMail, FiPhone, FiMapPin, FiHeart, FiShoppingBag} = FiIcons;
 
 const Footer = () => {
   return (
@@ -13,9 +13,9 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-3 mb-4">
-              <img 
-                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1750773391143-CLR%20Logo%20Favicon.png" 
-                alt="Chef Life Radio" 
+              <img
+                src="https://quest-media-storage-bucket.s3.us-east-2.amazonaws.com/1750773391143-CLR%20Logo%20Favicon.png"
+                alt="Chef Life Radio"
                 className="h-12 w-12"
               />
               <div>
@@ -28,13 +28,21 @@ const Footer = () => {
               Creating culture, not just controlling chaos.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-brand-gold transition-colors">
+              <a
+                href="https://link.chefliferadio.com/connect"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-brand-gold transition-colors"
+                title="Connect with us on all platforms"
+              >
                 <SafeIcon icon={FiInstagram} className="h-6 w-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-brand-gold transition-colors">
-                <SafeIcon icon={FiTwitter} className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-brand-gold transition-colors">
+              <a
+                href="https://www.youtube.com/@chefadammlamb"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-brand-gold transition-colors"
+              >
                 <SafeIcon icon={FiYoutube} className="h-6 w-6" />
               </a>
             </div>
@@ -48,21 +56,57 @@ const Footer = () => {
               <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors font-sans">About Us</Link></li>
               <li><Link to="/subscribe" className="text-gray-300 hover:text-white transition-colors font-sans">Subscribe</Link></li>
               <li><Link to="/blog" className="text-gray-300 hover:text-white transition-colors font-sans">Blog</Link></li>
+              <li>
+                <a 
+                  href="https://therealchefliferadio.captivate.fm/booking"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-300 hover:text-white transition-colors font-sans"
+                >
+                  Be Part of The Show
+                </a>
+              </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact & Support */}
           <div>
             <h4 className="text-lg font-heading font-semibold mb-4 text-brand-gold">Get in Touch</h4>
-            <div className="space-y-2">
+            <div className="space-y-2 mb-4">
               <div className="flex items-center space-x-2">
                 <SafeIcon icon={FiMail} className="h-4 w-4 text-brand-gold" />
-                <span className="text-gray-300 text-sm font-sans">hello@chefliferadio.com</span>
+                <span className="text-gray-300 text-sm font-sans">adam@chefliferadio.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <SafeIcon icon={FiPhone} className="h-4 w-4 text-brand-gold" />
-                <span className="text-gray-300 text-sm font-sans">+1 (555) 123-4567</span>
+                <span className="text-gray-300 text-sm font-sans">(828) 688-0080</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <SafeIcon icon={FiMapPin} className="h-4 w-4 text-brand-gold" />
+                <span className="text-gray-300 text-sm font-sans">Asheville, NC</span>
+              </div>
+            </div>
+            
+            {/* Support Links */}
+            <div className="space-y-2">
+              <a
+                href="https://ko-fi.com/chefliferadio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-gray-300 hover:text-brand-gold transition-colors text-sm font-sans"
+              >
+                <SafeIcon icon={FiHeart} className="h-4 w-4" />
+                <span>Support the Crew</span>
+              </a>
+              <a
+                href="https://swag.chefliferadio.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-gray-300 hover:text-brand-gold transition-colors text-sm font-sans"
+              >
+                <SafeIcon icon={FiShoppingBag} className="h-4 w-4" />
+                <span>Chef Life Swag</span>
+              </a>
             </div>
           </div>
         </div>

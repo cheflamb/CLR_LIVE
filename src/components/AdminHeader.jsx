@@ -10,9 +10,22 @@ const AdminHeader = () => {
   const { user, signOut } = useAuth();
 
   const handleSignOut = async () => {
-    const result = await signOut();
-    if (!result.success) {
-      console.error('Error signing out:', result.error);
+    try {
+      console.log('🔄 Sign out button clicked');
+      const result = await signOut();
+      
+      if (result.success) {
+        console.log('✅ Sign out successful, should redirect');
+        // Force a page reload to ensure clean state
+        window.location.reload();
+      } else {
+        console.error('❌ Sign out failed:', result.error);
+        alert('Error signing out. Please try again.');
+      }
+    } catch (error) {
+      console.error('❌ Unexpected error during sign out:', error);
+      // Force sign out even if there's an error
+      window.location.reload();
     }
   };
 
@@ -30,12 +43,13 @@ const AdminHeader = () => {
             <p className="text-sm text-brand-gray font-sans">Chef Life Radio Content Management</p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2 text-sm text-brand-gray">
             <SafeIcon icon={FiUser} className="h-4 w-4" />
             <span className="font-sans">{user?.email}</span>
           </div>
+          
           <button
             onClick={handleSignOut}
             className="bg-gray-100 hover:bg-gray-200 text-brand-black px-4 py-2 rounded-lg font-heading font-medium transition-colors flex items-center space-x-2"

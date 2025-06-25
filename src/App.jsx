@@ -1,9 +1,10 @@
 import React from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import ChefBot from './components/ChefBot';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Episodes from './pages/Episodes';
@@ -13,32 +14,56 @@ import Contact from './pages/Contact';
 import Blog from './pages/Blog';
 import AdminPanel from './components/AdminPanel';
 
+function AppContent() {
+  const location = useLocation();
+  
+  // Determine current page for ChefBot context
+  const getCurrentPage = () => {
+    const path = location.pathname;
+    if (path === '/') return 'home';
+    if (path === '/contact') return 'contact';
+    if (path === '/subscribe') return 'subscribe';
+    if (path === '/episodes') return 'episodes';
+    if (path === '/blog') return 'blog';
+    if (path === '/about') return 'about';
+    if (path === '/admin') return 'admin';
+    return 'general';
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/episodes" element={<Episodes />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/subscribe" element={<Subscribe />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute>
+                <AdminPanel />
+              </ProtectedRoute>
+            } 
+          />
+        </Routes>
+      </AnimatePresence>
+      <Footer />
+      
+      {/* ChefBot - Context-aware */}
+      <ChefBot page={getCurrentPage()} />
+    </div>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <HashRouter>
-        <div className="min-h-screen bg-white">
-          <Header />
-          <AnimatePresence mode="wait">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/episodes" element={<Episodes />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/subscribe" element={<Subscribe />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route 
-                path="/admin" 
-                element={
-                  <ProtectedRoute>
-                    <AdminPanel />
-                  </ProtectedRoute>
-                } 
-              />
-            </Routes>
-          </AnimatePresence>
-          <Footer />
-        </div>
+        <AppContent />
       </HashRouter>
     </AuthProvider>
   );

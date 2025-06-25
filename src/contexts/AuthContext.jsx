@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
     const ensureAdminUserExists = async () => {
       try {
         console.log('🔧 Ensuring admin user record exists...');
-        
         const { error } = await supabase
           .from('admin_users_clr2025')
           .upsert([{
@@ -53,11 +52,12 @@ export const AuthProvider = ({ children }) => {
         await ensureAdminUserExists();
 
         const { data: { session }, error } = await supabase.auth.getSession();
+        
         if (error) {
           console.error('❌ Session error:', error);
           throw error;
         }
-        
+
         if (session?.user) {
           console.log('👤 User found:', session.user.email);
           setUser(session.user);
@@ -84,6 +84,14 @@ export const AuthProvider = ({ children }) => {
       async (event, session) => {
         console.log('🔄 Auth state changed:', event, session?.user?.email);
         
+        if (event === 'SIGNED_OUT') {
+          console.log('👋 User signed out, clearing state');
+          setUser(null);
+          setIsAdmin(false);
+          setLoading(false);
+          return;
+        }
+
         if (session?.user) {
           setUser(session.user);
           await checkAdminStatus(session.user);
@@ -117,12 +125,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       const adminStatus = !!data;
-      console.log('🔐 Admin status result:', { 
-        adminStatus, 
-        hasData: !!data, 
-        error: error?.message 
-      });
-      
+      console.log('🔐 Admin status result:', { adminStatus, hasData: !!data, error: error?.message });
       setIsAdmin(adminStatus);
     } catch (error) {
       console.error('❌ Error checking admin status:', error);
@@ -133,7 +136,6 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       console.log('🔑 Attempting sign in for:', email);
-      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
@@ -143,7 +145,7 @@ export const AuthProvider = ({ children }) => {
         console.error('❌ Sign in error:', error);
         throw error;
       }
-      
+
       console.log('✅ Sign in successful for:', data.user?.email);
       return { success: true, data };
     } catch (error) {
@@ -154,17 +156,27 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     try {
-      console.log('👋 Signing out...');
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      console.log('👋 Initiating sign out...');
       
+      // Clear local state first
       setUser(null);
       setIsAdmin(false);
+      
+      // Then sign out from Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('❌ Sign out error:', error);
+        // Even if there's an error, we've cleared local state
+        return { success: true }; // Consider it successful since we cleared state
+      }
+
       console.log('✅ Sign out successful');
       return { success: true };
     } catch (error) {
       console.error('❌ Sign out error:', error);
-      return { success: false, error: error.message };
+      // Even if there's an error, we've cleared local state
+      return { success: true }; // Consider it successful since we cleared state
     }
   };
 

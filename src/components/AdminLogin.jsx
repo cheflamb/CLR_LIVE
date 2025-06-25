@@ -14,7 +14,6 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
   const { signIn } = useAuth();
 
   const handleInputChange = (e) => {
@@ -34,14 +33,13 @@ const AdminLogin = () => {
     console.log('Form submitted with:', formData.email);
 
     const result = await signIn(formData.email, formData.password);
-    
     if (!result.success) {
       setError(result.error || 'Invalid credentials');
       console.error('Login failed:', result.error);
     } else {
       console.log('Login successful, should redirect now');
     }
-    
+
     setIsLoading(false);
   };
 
@@ -67,7 +65,7 @@ const AdminLogin = () => {
               <SafeIcon icon={FiAlertCircle} className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
                 <p className="text-blue-800 text-sm font-sans font-medium mb-1">Demo Credentials:</p>
-                <p className="text-blue-700 text-xs font-sans">Email: admin@chefliferadio.com</p>
+                <p className="text-blue-700 text-xs font-sans">Email: adam@chefliferadio.com</p>
                 <p className="text-blue-700 text-xs font-sans">Password: ChefLife2024!</p>
               </div>
             </div>
@@ -96,7 +94,7 @@ const AdminLogin = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-red focus:border-transparent font-sans"
-                  placeholder="admin@chefliferadio.com"
+                  placeholder="adam@chefliferadio.com"
                   required
                 />
               </div>

@@ -23,10 +23,12 @@ const ProtectedRoute = ({ children }) => {
 
   // Show login form if user is not authenticated or not admin
   if (!user || !isAdmin) {
+    console.log('🔐 Access denied - User:', !!user, 'Admin:', isAdmin);
     return <AdminLogin />;
   }
 
   // User is authenticated and is admin, show protected content
+  console.log('✅ Access granted - showing admin panel');
   return children;
 };
 
