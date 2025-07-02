@@ -1,24 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import React, {useState} from 'react';
+import {Link, useLocation} from 'react-router-dom';
+import {motion} from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
-import { useAuth } from '../contexts/AuthContext';
+import {useAuth} from '../contexts/AuthContext';
 
-const { FiMenu, FiX, FiSettings } = FiIcons;
+const {FiMenu, FiX, FiSettings} = FiIcons;
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin } = useAuth();
+  const {user, isAdmin} = useAuth();
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Episodes', path: '/episodes' },
-    { name: 'About', path: '/about' },
-    { name: 'Subscribe', path: '/subscribe' },
-    { name: 'Blog', path: '/blog' },
-    { name: 'Contact', path: '/contact' }
+    {name: 'Home', path: '/'},
+    {name: 'Episodes', path: '/episodes'},
+    {name: 'About', path: '/about'},
+    {name: 'Subscribe', path: '/subscribe'},
+    {name: 'Blog', path: '/blog'},
+    {name: 'Reviews', path: '/reviews'},
+    {name: 'Contact', path: '/contact'}
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -54,7 +55,7 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            
+
             {/* Admin Link - Only show for authenticated admin users */}
             {user && isAdmin && (
               <Link
@@ -100,9 +101,9 @@ const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <motion.nav
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+            initial={{opacity: 0, height: 0}}
+            animate={{opacity: 1, height: 'auto'}}
+            exit={{opacity: 0, height: 0}}
             className="md:hidden py-4 border-t border-gray-100"
           >
             {navItems.map((item) => (
@@ -110,20 +111,24 @@ const Header = () => {
                 key={item.name}
                 to={item.path}
                 className={`block py-2 text-sm font-heading font-medium ${
-                  isActive(item.path) ? 'text-brand-red' : 'text-brand-black hover:text-brand-red'
+                  isActive(item.path)
+                    ? 'text-brand-red'
+                    : 'text-brand-black hover:text-brand-red'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
               </Link>
             ))}
-            
+
             {/* Mobile Admin Link - Conditional rendering */}
             {((user && isAdmin) || !user) && (
               <Link
                 to="/admin"
                 className={`block py-2 text-sm font-heading font-medium flex items-center space-x-2 ${
-                  isActive('/admin') ? 'text-brand-red' : 'text-gray-500 hover:text-brand-red'
+                  isActive('/admin')
+                    ? 'text-brand-red'
+                    : 'text-gray-500 hover:text-brand-red'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >

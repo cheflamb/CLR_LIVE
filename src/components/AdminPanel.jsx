@@ -1,24 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, {useState, useEffect} from 'react';
+import {motion} from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import AdminHeader from './AdminHeader';
 import supabase from '../lib/supabase';
 
-const { FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiLoader, FiEye, FiDatabase, FiUsers } = FiIcons;
+const {FiPlus, FiEdit2, FiTrash2, FiSave, FiX, FiLoader, FiEye, FiDatabase, FiUsers, FiVideo, FiPlay, FiUpload} = FiIcons;
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('posts');
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [episodes, setEpisodes] = useState([]);
+  const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
   const [editingEpisode, setEditingEpisode] = useState(null);
+  const [editingVideo, setEditingVideo] = useState(null);
   const [stats, setStats] = useState({
     totalPosts: 0,
     publishedPosts: 0,
     totalEpisodes: 0,
+    totalVideos: 0,
     totalCategories: 0
   });
 
@@ -49,28 +52,47 @@ const AdminPanel = () => {
     status: 'draft'
   });
 
+  const [newVideo, setNewVideo] = useState({
+    title: '',
+    description: '',
+    video_url: '',
+    thumbnail_url: '',
+    video_type: 'youtube',
+    episode_id: '',
+    duration_seconds: '',
+    featured: false,
+    is_published: true,
+    lead_magnet_enabled: false,
+    lead_magnet_title: '',
+    tags: []
+  });
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [postsResponse, categoriesResponse, episodesResponse] = await Promise.all([
-        supabase.from('blog_posts_clr2025').select('*').order('created_at', { ascending: false }),
+      const [postsResponse, categoriesResponse, episodesResponse, videosResponse] = await Promise.all([
+        supabase.from('blog_posts_clr2025').select('*').order('created_at', {ascending: false}),
         supabase.from('blog_categories_clr2025').select('*').order('name'),
-        supabase.from('podcast_episodes_clr2025').select('*').order('created_at', { ascending: false })
+        supabase.from('podcast_episodes_clr2025').select('*').order('created_at', {ascending: false}),
+        supabase.from('video_content_clr2025').select('*').order('created_at', {ascending: false})
       ]);
 
       const postsData = postsResponse.data || [];
       const categoriesData = categoriesResponse.data || [];
       const episodesData = episodesResponse.data || [];
+      const videosData = videosResponse.data || [];
 
       setPosts(postsData);
       setCategories(categoriesData);
       setEpisodes(episodesData);
+      setVideos(videosData);
 
       // Calculate stats
       setStats({
         totalPosts: postsData.length,
         publishedPosts: postsData.filter(p => p.status === 'published').length,
         totalEpisodes: episodesData.length,
+        totalVideos: videosData.length,
         totalCategories: categoriesData.length
       });
     } catch (error) {
@@ -87,13 +109,13 @@ const AdminPanel = () => {
   const handleSavePost = async (postData) => {
     try {
       if (editingPost && editingPost !== 'new') {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('blog_posts_clr2025')
           .update(postData)
           .eq('id', editingPost.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('blog_posts_clr2025')
           .insert([{
             ...postData,
@@ -101,7 +123,7 @@ const AdminPanel = () => {
           }]);
         if (error) throw error;
       }
-      
+
       setEditingPost(null);
       setNewPost({
         title: '',
@@ -126,13 +148,13 @@ const AdminPanel = () => {
   const handleSaveEpisode = async (episodeData) => {
     try {
       if (editingEpisode && editingEpisode !== 'new') {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('podcast_episodes_clr2025')
           .update(episodeData)
           .eq('id', editingEpisode.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('podcast_episodes_clr2025')
           .insert([{
             ...episodeData,
@@ -140,7 +162,7 @@ const AdminPanel = () => {
           }]);
         if (error) throw error;
       }
-      
+
       setEditingEpisode(null);
       setNewEpisode({
         title: '',
@@ -161,10 +183,87 @@ const AdminPanel = () => {
     }
   };
 
+  const handleSaveVideo = async (videoData) => {
+    try {
+      // Process YouTube URL to get video ID and generate thumbnail
+      const processedVideoData = processVideoData(videoData);
+
+      if (editingVideo && editingVideo !== 'new') {
+        const {error} = await supabase
+          .from('video_content_clr2025')
+          .update(processedVideoData)
+          .eq('id', editingVideo.id);
+        if (error) throw error;
+      } else {
+        const {error} = await supabase
+          .from('video_content_clr2025')
+          .insert([{
+            ...processedVideoData,
+            view_count: 0,
+            created_at: new Date().toISOString()
+          }]);
+        if (error) throw error;
+      }
+
+      setEditingVideo(null);
+      setNewVideo({
+        title: '',
+        description: '',
+        video_url: '',
+        thumbnail_url: '',
+        video_type: 'youtube',
+        episode_id: '',
+        duration_seconds: '',
+        featured: false,
+        is_published: true,
+        lead_magnet_enabled: false,
+        lead_magnet_title: '',
+        tags: []
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error saving video:', error);
+      alert('Error saving video. Please try again.');
+    }
+  };
+
+  const processVideoData = (videoData) => {
+    let processedData = {...videoData};
+
+    // Extract YouTube video ID and generate thumbnail
+    if (videoData.video_type === 'youtube' && videoData.video_url) {
+      const videoId = extractYouTubeVideoId(videoData.video_url);
+      if (videoId) {
+        processedData.video_id = videoId;
+        // Auto-generate thumbnail if not provided
+        if (!videoData.thumbnail_url) {
+          processedData.thumbnail_url = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+        }
+        // Ensure URL is in embed format
+        processedData.video_url = `https://www.youtube.com/embed/${videoId}`;
+      }
+    }
+
+    return processedData;
+  };
+
+  const extractYouTubeVideoId = (url) => {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+      /^([a-zA-Z0-9_-]{11})$/ // Direct video ID
+    ];
+
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) return match[1];
+    }
+    return null;
+  };
+
   const handleDeletePost = async (postId) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('blog_posts_clr2025')
           .delete()
           .eq('id', postId);
@@ -180,7 +279,7 @@ const AdminPanel = () => {
   const handleDeleteEpisode = async (episodeId) => {
     if (window.confirm('Are you sure you want to delete this episode?')) {
       try {
-        const { error } = await supabase
+        const {error} = await supabase
           .from('podcast_episodes_clr2025')
           .delete()
           .eq('id', episodeId);
@@ -193,6 +292,22 @@ const AdminPanel = () => {
     }
   };
 
+  const handleDeleteVideo = async (videoId) => {
+    if (window.confirm('Are you sure you want to delete this video?')) {
+      try {
+        const {error} = await supabase
+          .from('video_content_clr2025')
+          .delete()
+          .eq('id', videoId);
+        if (error) throw error;
+        fetchData();
+      } catch (error) {
+        console.error('Error deleting video:', error);
+        alert('Error deleting video. Please try again.');
+      }
+    }
+  };
+
   const generateSlug = (title) => {
     return title
       .toLowerCase()
@@ -200,21 +315,284 @@ const AdminPanel = () => {
       .replace(/(^-|-$)/g, '');
   };
 
-  const PostForm = ({ post, onSave, onCancel }) => {
-    const [formData, setFormData] = useState(post || newPost);
+  const VideoForm = ({video, onSave, onCancel}) => {
+    const [formData, setFormData] = useState(video || newVideo);
 
     const handleChange = (e) => {
-      const { name, value, type, checked } = e.target;
+      const {name, value, type, checked} = e.target;
       setFormData(prev => ({
         ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-        ...(name === 'title' && { slug: generateSlug(value) })
+        [name]: type === 'checkbox' ? checked : value
       }));
     };
 
     const handleTagsChange = (e) => {
       const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag);
-      setFormData(prev => ({ ...prev, tags }));
+      setFormData(prev => ({...prev, tags}));
+    };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onSave(formData);
+    };
+
+    const handleUrlPreview = () => {
+      if (formData.video_url && formData.video_type === 'youtube') {
+        const videoId = extractYouTubeVideoId(formData.video_url);
+        if (videoId) {
+          const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+          setFormData(prev => ({
+            ...prev,
+            thumbnail_url: thumbnailUrl,
+            video_id: videoId
+          }));
+        }
+      }
+    };
+
+    return (
+      <motion.div
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      >
+        <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-2xl font-heading font-bold">
+              {video ? 'Edit Video' : 'Add New Video'}
+            </h3>
+            <button onClick={onCancel} className="text-gray-500 hover:text-gray-700">
+              <SafeIcon icon={FiX} className="h-6 w-6" />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Video Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Video Type</label>
+                <select
+                  name="video_type"
+                  value={formData.video_type}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                >
+                  <option value="youtube">YouTube</option>
+                  <option value="vimeo">Vimeo</option>
+                  <option value="direct">Direct Upload</option>
+                  <option value="live_stream">Live Stream</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Duration (seconds)</label>
+                <input
+                  type="number"
+                  name="duration_seconds"
+                  value={formData.duration_seconds}
+                  onChange={handleChange}
+                  placeholder="e.g., 1200 (20 minutes)"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            {/* Video URL with Preview */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Video URL</label>
+              <div className="flex gap-2">
+                <input
+                  type="url"
+                  name="video_url"
+                  value={formData.video_url}
+                  onChange={handleChange}
+                  placeholder="https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={handleUrlPreview}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium"
+                >
+                  Preview
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Supports: YouTube watch URLs, youtu.be short URLs, or direct video IDs
+              </p>
+            </div>
+
+            {/* Thumbnail URL with Preview */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail URL</label>
+              <input
+                type="url"
+                name="thumbnail_url"
+                value={formData.thumbnail_url}
+                onChange={handleChange}
+                placeholder="Auto-generated for YouTube videos"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+              {formData.thumbnail_url && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.thumbnail_url} 
+                    alt="Thumbnail preview" 
+                    className="w-32 h-18 object-cover rounded border"
+                    onError={(e) => {e.target.style.display = 'none'}} 
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            {/* Episode Association */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Associated Episode (Optional)</label>
+              <select
+                name="episode_id"
+                value={formData.episode_id}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              >
+                <option value="">No associated episode</option>
+                {episodes.map(episode => (
+                  <option key={episode.id} value={episode.id}>
+                    Episode {episode.episode_number}: {episode.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma-separated)</label>
+              <input
+                type="text"
+                value={formData.tags?.join(', ') || ''}
+                onChange={handleTagsChange}
+                placeholder="leadership, kitchen culture, interview"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+              />
+            </div>
+
+            {/* Lead Magnet Settings */}
+            <div className="border-t pt-4">
+              <h4 className="text-lg font-medium text-gray-900 mb-3">Lead Capture Settings</h4>
+              
+              <div className="flex items-center mb-3">
+                <input
+                  type="checkbox"
+                  name="lead_magnet_enabled"
+                  checked={formData.lead_magnet_enabled}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label className="text-sm font-medium text-gray-700">Enable lead capture overlay</label>
+              </div>
+
+              {formData.lead_magnet_enabled && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Lead Magnet Title</label>
+                  <input
+                    type="text"
+                    name="lead_magnet_title"
+                    value={formData.lead_magnet_title}
+                    onChange={handleChange}
+                    placeholder="Get Our Free Kitchen Leadership Guide"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-red focus:border-transparent"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Status Settings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="featured"
+                  checked={formData.featured}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label className="text-sm font-medium text-gray-700">Featured Video</label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="is_published"
+                  checked={formData.is_published}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <label className="text-sm font-medium text-gray-700">Published</label>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end space-x-4 pt-4">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="bg-brand-red hover:bg-red-800 text-white px-6 py-2 rounded-lg font-medium flex items-center space-x-2"
+              >
+                <SafeIcon icon={FiSave} className="h-4 w-4" />
+                <span>Save Video</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const PostForm = ({post, onSave, onCancel}) => {
+    const [formData, setFormData] = useState(post || newPost);
+
+    const handleChange = (e) => {
+      const {name, value, type, checked} = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+        ...(name === 'title' && {slug: generateSlug(value)})
+      }));
+    };
+
+    const handleTagsChange = (e) => {
+      const tags = e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+      setFormData(prev => ({...prev, tags}));
     };
 
     const handleSubmit = (e) => {
@@ -224,8 +602,8 @@ const AdminPanel = () => {
 
     return (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       >
         <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -372,11 +750,11 @@ const AdminPanel = () => {
     );
   };
 
-  const EpisodeForm = ({ episode, onSave, onCancel }) => {
+  const EpisodeForm = ({episode, onSave, onCancel}) => {
     const [formData, setFormData] = useState(episode || newEpisode);
 
     const handleChange = (e) => {
-      const { name, value, type } = e.target;
+      const {name, value, type} = e.target;
       setFormData(prev => ({
         ...prev,
         [name]: type === 'number' ? parseInt(value) || '' : value
@@ -390,8 +768,8 @@ const AdminPanel = () => {
 
     return (
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={{opacity: 0}}
+        animate={{opacity: 1}}
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       >
         <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
@@ -557,7 +935,7 @@ const AdminPanel = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-sm p-6 border">
             <div className="flex items-center space-x-3">
               <SafeIcon icon={FiDatabase} className="h-8 w-8 text-blue-500" />
@@ -587,6 +965,15 @@ const AdminPanel = () => {
           </div>
           <div className="bg-white rounded-xl shadow-sm p-6 border">
             <div className="flex items-center space-x-3">
+              <SafeIcon icon={FiVideo} className="h-8 w-8 text-red-500" />
+              <div>
+                <p className="text-2xl font-bold text-brand-black">{stats.totalVideos}</p>
+                <p className="text-sm text-brand-gray font-sans">Videos</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-sm p-6 border">
+            <div className="flex items-center space-x-3">
               <SafeIcon icon={FiDatabase} className="h-8 w-8 text-orange-500" />
               <div>
                 <p className="text-2xl font-bold text-brand-black">{stats.totalCategories}</p>
@@ -600,9 +987,10 @@ const AdminPanel = () => {
         <div className="bg-white rounded-lg shadow mb-8">
           <div className="flex border-b">
             {[
-              { id: 'posts', label: 'Blog Posts', count: posts.length },
-              { id: 'episodes', label: 'Episodes', count: episodes.length },
-              { id: 'categories', label: 'Categories', count: categories.length }
+              {id: 'posts', label: 'Blog Posts', count: posts.length},
+              {id: 'episodes', label: 'Episodes', count: episodes.length},
+              {id: 'videos', label: 'Videos', count: videos.length},
+              {id: 'categories', label: 'Categories', count: categories.length}
             ].map(tab => (
               <button
                 key={tab.id}
@@ -635,7 +1023,6 @@ const AdminPanel = () => {
                 <span>New Post</span>
               </button>
             </div>
-
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
@@ -682,9 +1069,11 @@ const AdminPanel = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          post.status === 'published' ? 'bg-green-100 text-green-800' :
-                          post.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                          post.status === 'published'
+                            ? 'bg-green-100 text-green-800'
+                            : post.status === 'draft'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}>
                           {post.status}
                         </span>
@@ -737,7 +1126,6 @@ const AdminPanel = () => {
                 <span>New Episode</span>
               </button>
             </div>
-
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
@@ -779,9 +1167,11 @@ const AdminPanel = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 rounded-full text-xs ${
-                          episode.status === 'published' ? 'bg-green-100 text-green-800' :
-                          episode.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-gray-100 text-gray-800'
+                          episode.status === 'published'
+                            ? 'bg-green-100 text-green-800'
+                            : episode.status === 'draft'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-gray-100 text-gray-800'
                         }`}>
                           {episode.status}
                         </span>
@@ -796,6 +1186,125 @@ const AdminPanel = () => {
                           </button>
                           <button
                             onClick={() => handleDeleteEpisode(episode.id)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <SafeIcon icon={FiTrash2} className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Videos Tab */}
+        {activeTab === 'videos' && (
+          <div className="bg-white rounded-lg shadow">
+            <div className="p-6 border-b flex justify-between items-center">
+              <h2 className="text-xl font-heading font-semibold">Video Content</h2>
+              <button
+                onClick={() => setEditingVideo('new')}
+                className="bg-brand-red hover:bg-red-800 text-white px-4 py-2 rounded-lg font-medium flex items-center space-x-2"
+              >
+                <SafeIcon icon={FiPlus} className="h-4 w-4" />
+                <span>Add Video</span>
+              </button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Video
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Duration
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Views
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {videos.map(video => (
+                    <tr key={video.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-3">
+                          {video.thumbnail_url && (
+                            <img
+                              src={video.thumbnail_url}
+                              alt={video.title}
+                              className="w-16 h-9 object-cover rounded"
+                            />
+                          )}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {video.title}
+                              {video.featured && (
+                                <span className="ml-2 bg-brand-gold text-brand-black px-2 py-1 rounded-full text-xs">
+                                  Featured
+                                </span>
+                              )}
+                              {video.lead_magnet_enabled && (
+                                <span className="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                                  Lead Capture
+                                </span>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-500">{video.description?.substring(0, 50)}...</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs">
+                          {video.video_type.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {video.duration_seconds ? `${Math.floor(video.duration_seconds / 60)}:${(video.duration_seconds % 60).toString().padStart(2, '0')}` : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          video.is_published
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {video.is_published ? 'Published' : 'Draft'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {video.view_count || 0}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end space-x-2">
+                          {video.video_url && (
+                            <button
+                              onClick={() => window.open(video.video_url.replace('/embed/', '/watch?v='), '_blank')}
+                              className="text-brand-red hover:text-red-800"
+                            >
+                              <SafeIcon icon={FiPlay} className="h-4 w-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setEditingVideo(video)}
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <SafeIcon icon={FiEdit2} className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteVideo(video.id)}
                             className="text-red-600 hover:text-red-800"
                           >
                             <SafeIcon icon={FiTrash2} className="h-4 w-4" />
@@ -825,6 +1334,15 @@ const AdminPanel = () => {
             episode={editingEpisode === 'new' ? null : editingEpisode}
             onSave={handleSaveEpisode}
             onCancel={() => setEditingEpisode(null)}
+          />
+        )}
+
+        {/* Show Video Form */}
+        {editingVideo && (
+          <VideoForm
+            video={editingVideo === 'new' ? null : editingVideo}
+            onSave={handleSaveVideo}
+            onCancel={() => setEditingVideo(null)}
           />
         )}
       </div>

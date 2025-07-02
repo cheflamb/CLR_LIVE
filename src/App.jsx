@@ -1,7 +1,7 @@
 import React from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { AuthProvider } from './contexts/AuthContext';
+import {HashRouter, Routes, Route, useLocation} from 'react-router-dom';
+import {motion, AnimatePresence} from 'framer-motion';
+import {AuthProvider} from './contexts/AuthContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ChefBot from './components/ChefBot';
@@ -12,11 +12,12 @@ import About from './pages/About';
 import Subscribe from './pages/Subscribe';
 import Contact from './pages/Contact';
 import Blog from './pages/Blog';
+import Reviews from './pages/Reviews';
 import AdminPanel from './components/AdminPanel';
 
 function AppContent() {
   const location = useLocation();
-  
+
   // Determine current page for ChefBot context
   const getCurrentPage = () => {
     const path = location.pathname;
@@ -26,6 +27,7 @@ function AppContent() {
     if (path === '/episodes') return 'episodes';
     if (path === '/blog') return 'blog';
     if (path === '/about') return 'about';
+    if (path === '/reviews') return 'reviews';
     if (path === '/admin') return 'admin';
     return 'general';
   };
@@ -33,6 +35,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
+      
       <AnimatePresence mode="wait">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -41,16 +44,15 @@ function AppContent() {
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<Blog />} />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute>
-                <AdminPanel />
-              </ProtectedRoute>
-            } 
-          />
+          <Route path="/reviews" element={<Reviews />} />
+          <Route path="/admin" element={
+            <ProtectedRoute>
+              <AdminPanel />
+            </ProtectedRoute>
+          } />
         </Routes>
       </AnimatePresence>
+      
       <Footer />
       
       {/* ChefBot - Context-aware */}

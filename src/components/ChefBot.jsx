@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, {useState, useEffect} from 'react';
+import {motion, AnimatePresence} from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 
-const { FiMessageCircle, FiX, FiSend, FiChef } = FiIcons;
+const {FiMessageCircle, FiX, FiSend, FiChef} = FiIcons;
 
-const ChefBot = ({ page = 'general' }) => {
+const ChefBot = ({page = 'general'}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasShown, setHasShown] = useState(false);
 
@@ -29,10 +29,11 @@ const ChefBot = ({ page = 'general' }) => {
       episodes: "🎙️ Looking for specific episodes or content? I'm ChefBot and I can help you find what you need!",
       blog: "📚 Welcome to our blog! I'm ChefBot. Looking for specific leadership topics or articles?",
       about: "ℹ️ Learning about Chef Life Radio? I'm ChefBot and I can answer any questions about our mission!",
+      reviews: "⭐ Reading our reviews? I'm ChefBot! Need help leaving feedback or have questions about our community?",
       admin: "⚙️ Need help with the admin dashboard? I'm ChefBot, your admin assistant!",
       general: "👋 Hi! I'm ChefBot, your Chef Life Radio assistant. How can I help you today?"
     };
-    
+
     return greetings[page] || greetings.general;
   };
 
@@ -68,6 +69,12 @@ const ChefBot = ({ page = 'general' }) => {
         "Find specific topics",
         "How do I subscribe to blog updates?"
       ],
+      reviews: [
+        "How do I leave a review?",
+        "Where can I share feedback?",
+        "How do I rate episodes?",
+        "Can I submit a testimonial?"
+      ],
       general: [
         "How do I subscribe?",
         "Contact information",
@@ -75,7 +82,7 @@ const ChefBot = ({ page = 'general' }) => {
         "Latest episodes"
       ]
     };
-    
+
     return actions[page] || actions.general;
   };
 
@@ -99,9 +106,9 @@ const ChefBot = ({ page = 'general' }) => {
     <>
       {/* ChefBot Floating Button */}
       <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 1, type: "spring" }}
+        initial={{scale: 0}}
+        animate={{scale: 1}}
+        transition={{delay: 1, type: "spring"}}
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 bg-brand-red hover:bg-red-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all z-50"
         title="Chat with ChefBot"
@@ -111,9 +118,9 @@ const ChefBot = ({ page = 'general' }) => {
         {/* Notification Badge */}
         {!hasShown && (
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 2 }}
+            initial={{scale: 0}}
+            animate={{scale: 1}}
+            transition={{delay: 2}}
             className="absolute -top-2 -right-2 bg-brand-gold text-brand-black text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold"
           >
             !
@@ -125,15 +132,15 @@ const ChefBot = ({ page = 'general' }) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{opacity: 0}}
+            animate={{opacity: 1}}
+            exit={{opacity: 0}}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-end sm:items-center justify-center z-50 p-4"
           >
             <motion.div
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 50, scale: 0.9 }}
+              initial={{opacity: 0, y: 50, scale: 0.9}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 50, scale: 0.9}}
               className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[80vh] overflow-hidden"
             >
               {/* Header */}
@@ -195,8 +202,7 @@ const ChefBot = ({ page = 'general' }) => {
 
                 {/* Footer */}
                 <p className="text-xs text-brand-gray text-center mt-4 font-sans">
-                  ChefBot is trained on Chef Life Radio content and can help with navigation, 
-                  subscriptions, and general questions.
+                  ChefBot is trained on Chef Life Radio content and can help with navigation, subscriptions, and general questions.
                 </p>
               </div>
             </motion.div>
