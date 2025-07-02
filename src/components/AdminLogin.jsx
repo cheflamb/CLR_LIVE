@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import {motion} from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
-import {useAuth} from '../contexts/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 
-const {FiShield, FiMail, FiLock, FiLoader, FiEye, FiEyeOff, FiAlertCircle} = FiIcons;
+const { FiShield, FiMail, FiLock, FiLoader, FiEye, FiEyeOff, FiAlertCircle } = FiIcons;
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -14,10 +14,10 @@ const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const {signIn} = useAuth();
+  const { signIn } = useAuth();
 
   const handleInputChange = (e) => {
-    const {name, value} = e.target;
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -31,17 +31,29 @@ const AdminLogin = () => {
     setError('');
 
     console.log('Form submitted with:', formData.email);
-
     const result = await signIn(formData.email, formData.password);
-    
+
     if (!result.success) {
       setError(result.error || 'Invalid credentials');
       console.error('Login failed:', result.error);
     } else {
       console.log('Login successful, should redirect now');
     }
-    
+
     setIsLoading(false);
+  };
+
+  const handleEmergencyAccess = () => {
+    console.log('🚨 Emergency access requested');
+    localStorage.setItem('emergency_admin', 'true');
+    window.location.reload();
+  };
+
+  const handleAutoFill = () => {
+    setFormData({
+      email: 'adam@chefliferadio.com',
+      password: 'ChefLife2024!'
+    });
   };
 
   return (
@@ -64,10 +76,16 @@ const AdminLogin = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <div className="flex items-start space-x-2">
               <SafeIcon icon={FiAlertCircle} className="h-5 w-5 text-blue-600 mt-0.5" />
-              <div>
+              <div className="flex-1">
                 <p className="text-blue-800 text-sm font-sans font-medium mb-1">Demo Credentials:</p>
                 <p className="text-blue-700 text-xs font-sans">Email: adam@chefliferadio.com</p>
                 <p className="text-blue-700 text-xs font-sans">Password: ChefLife2024!</p>
+                <button
+                  onClick={handleAutoFill}
+                  className="mt-2 text-blue-600 hover:text-blue-800 text-xs font-sans underline"
+                >
+                  Click to auto-fill
+                </button>
               </div>
             </div>
           </div>
@@ -141,6 +159,19 @@ const AdminLogin = () => {
               )}
             </button>
           </form>
+
+          {/* Emergency Access Button - BIGGER AND MORE PROMINENT */}
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <button
+              onClick={handleEmergencyAccess}
+              className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-lg font-heading font-semibold transition-colors text-base"
+            >
+              🚨 EMERGENCY ACCESS - CLICK HERE
+            </button>
+            <p className="text-xs text-brand-gray text-center mt-2 font-sans">
+              Use this if you're experiencing any connection issues
+            </p>
+          </div>
 
           <div className="mt-6 text-center">
             <p className="text-xs text-brand-gray font-sans">

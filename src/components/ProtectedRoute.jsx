@@ -23,7 +23,7 @@ const ProtectedRoute = ({ children }) => {
 
   // Show login form if user is not authenticated or not admin
   if (!user || !isAdmin) {
-    console.log('🔐 Access denied - User:', !!user, 'Admin:', isAdmin);
+    console.log('🔐 Access check - User:', !!user, 'Admin:', isAdmin, 'Emergency:', user?.emergency);
     return <AdminLogin />;
   }
 
