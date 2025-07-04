@@ -1,7 +1,10 @@
 import React from 'react';
-import {HashRouter, Routes, Route, useLocation} from 'react-router-dom';
-import {motion, AnimatePresence} from 'framer-motion';
-import {AuthProvider} from './contexts/AuthContext';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { QuestProvider } from '@questlabs/react-sdk';
+import '@questlabs/react-sdk/dist/style.css';
+import { AuthProvider } from './contexts/AuthContext';
+import questConfig from './config/questConfig';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ChefBot from './components/ChefBot';
@@ -33,31 +36,38 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      
-      <AnimatePresence mode="wait">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/episodes" element={<Episodes />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/subscribe" element={<Subscribe />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/reviews" element={<Reviews />} />
-          <Route path="/admin" element={
-            <ProtectedRoute>
-              <AdminPanel />
-            </ProtectedRoute>
-          } />
-        </Routes>
-      </AnimatePresence>
-      
-      <Footer />
-      
-      {/* ChefBot - Context-aware */}
-      <ChefBot page={getCurrentPage()} />
-    </div>
+    <QuestProvider
+      apiKey={questConfig.APIKEY}
+      entityId={questConfig.ENTITYID}
+      apiType="PRODUCTION"
+    >
+      <div className="min-h-screen bg-white">
+        <Header />
+        <AnimatePresence mode="wait">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/episodes" element={<Episodes />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/reviews" element={<Reviews />} />
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminPanel />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </AnimatePresence>
+        <Footer />
+        
+        {/* ChefBot - Context-aware */}
+        <ChefBot page={getCurrentPage()} />
+      </div>
+    </QuestProvider>
   );
 }
 

@@ -5,7 +5,7 @@ import * as FiIcons from 'react-icons/fi';
 import SafeIcon from '../common/SafeIcon';
 import MembershipButton from '../components/MembershipButton';
 
-const {FiPlay, FiHeadphones, FiStar, FiMail, FiUsers, FiTarget, FiHeart, FiMic, FiShoppingBag} = FiIcons;
+const {FiPlay,FiHeadphones,FiStar,FiMail,FiUsers,FiTarget,FiHeart,FiMic,FiShoppingBag,FiClock,FiCalendar,FiUser} = FiIcons;
 
 const Home = () => {
   const values = [
@@ -110,8 +110,100 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured YouTube Video */}
+      {/* Featured Podcast Episode */}
       <section className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-4xl font-display font-bold text-brand-black mb-4">Latest Episode</h2>
+            <p className="text-xl text-brand-gray font-sans">Fresh insights from the kitchen</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto"
+          >
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                {/* Episode Image */}
+                <div className="relative">
+                  <img
+                    src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                    alt="Latest Episode"
+                    className="w-full h-64 lg:h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                    <button className="bg-brand-red hover:bg-red-800 p-4 rounded-full transition-colors shadow-lg">
+                      <SafeIcon icon={FiPlay} className="h-8 w-8 text-white ml-1" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Episode Details */}
+                <div className="p-8 flex flex-col justify-center">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <span className="bg-brand-red text-white px-3 py-1 rounded-full text-sm font-heading font-medium">
+                      Episode 247
+                    </span>
+                    <span className="bg-brand-gold text-brand-black px-3 py-1 rounded-full text-sm font-heading font-medium">
+                      Featured
+                    </span>
+                  </div>
+
+                  <h3 className="text-2xl font-heading font-bold text-brand-black mb-4 leading-tight">
+                    Building Resilient Kitchen Teams: Leadership in High-Pressure Environments
+                  </h3>
+
+                  <p className="text-brand-gray mb-6 font-sans leading-relaxed">
+                    Discover the essential strategies for creating unbreakable team bonds in the kitchen. 
+                    Chef Adam shares practical frameworks for leading under pressure while maintaining compassion and respect.
+                  </p>
+
+                  <div className="flex items-center space-x-4 text-sm text-brand-gray mb-6">
+                    <div className="flex items-center space-x-1">
+                      <SafeIcon icon={FiUser} className="h-4 w-4" />
+                      <span className="font-sans">Chef Adam Lamb</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <SafeIcon icon={FiClock} className="h-4 w-4" />
+                      <span className="font-sans">42 min</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <SafeIcon icon={FiCalendar} className="h-4 w-4" />
+                      <span className="font-sans">Dec 15, 2024</span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link
+                      to="/episodes"
+                      className="bg-brand-red hover:bg-red-800 text-white px-6 py-3 rounded-lg font-heading font-semibold transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <SafeIcon icon={FiHeadphones} className="h-4 w-4" />
+                      <span>Listen Now</span>
+                    </Link>
+                    <Link
+                      to="/episodes"
+                      className="border border-brand-red text-brand-red hover:bg-brand-red hover:text-white px-6 py-3 rounded-lg font-heading font-semibold transition-colors flex items-center justify-center space-x-2"
+                    >
+                      <span>All Episodes</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Featured YouTube Video */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -122,6 +214,7 @@ const Home = () => {
             <h2 className="text-4xl font-display font-bold text-brand-black mb-4">Featured Video</h2>
             <p className="text-xl text-brand-gray font-sans">Leadership insights from the kitchen</p>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -146,7 +239,7 @@ const Home = () => {
       </section>
 
       {/* Our Beliefs */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -193,7 +286,7 @@ const Home = () => {
       </section>
 
       {/* Community Links */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -232,7 +325,7 @@ const Home = () => {
       </section>
 
       {/* Kitchen Culture Images */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -246,6 +339,7 @@ const Home = () => {
                 className="rounded-2xl shadow-lg w-full"
               />
             </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
