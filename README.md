@@ -96,8 +96,7 @@ Default admin credentials:
 
 Just add these two variables to get started:
 ```
-VITE_SUPABASE_URL=https://uorhddenfmzsstipytdb.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvcmhkZGVuZm16c3p0aXB5dGRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA3OTY1NTgsImV4cCI6MjA2NjM3MjU1OH0.VRu_kU5lmD1suFt3iNK5wmHf4fBiUeHzzpQNLw0La1M
-```
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=e
 
 Everything else can be added later!
